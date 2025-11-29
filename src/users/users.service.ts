@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
@@ -27,11 +32,21 @@ export class UsersService {
   }
 
   findOne(id: string): User {
-    return this.users.find((user) => user.id === id);
+    if (id.length !== 36) {
+      throw new BadRequestException('User id is not a valid uuid');
+    }
+    const user = this.users.find((user) => user.id === id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
   update(id: string, updatePasswordDto: UpdatePasswordDto): User {
     const user = this.findOne(id);
+    if (user.password !== updatePasswordDto.oldPassword) {
+      throw new ForbiddenException('Old password is wrong');
+    }
     user.password = updatePasswordDto.newPassword;
     user.version += 1;
     user.updatedAt = Date.now();
@@ -40,9 +55,14 @@ export class UsersService {
   }
 
   remove(id: string): void {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex > -1) {
-      this.users.splice(userIndex, 1);
+    if (id.length !== 36) {
+      throw new BadRequestException('User id is not a valid uuid');
     }
+
+    const userIndex = this.users.findIndex((user) => user.id === id);
+    if (userIndex === -1) {
+      throw new NotFoundException('User not found');
+    }
+    this.users.splice(userIndex, 1);
   }
 }
