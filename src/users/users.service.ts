@@ -27,7 +27,7 @@ export class UsersService {
   }
 
   findOne(id: string): User {
-    return null;
+    return this.users.find((user) => user.id === id);
   }
 
   update(id: string, updatePasswordDto: UpdatePasswordDto): User {
