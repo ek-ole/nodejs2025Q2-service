@@ -14,14 +14,14 @@ export class UsersService {
   private users: User[] = [];
 
   create(createUserDto: CreateUserDto): User {
-    const newUser: User = {
-      id: uuidv4(),
-      login: createUserDto.login,
-      password: createUserDto.password,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
+    const newUser = new User();
+
+    newUser.id = uuidv4();
+    newUser.login = createUserDto.login;
+    newUser.password = createUserDto.password;
+    newUser.version = 1;
+    newUser.createdAt = Date.now();
+    newUser.updatedAt = Date.now();
 
     this.users.push(newUser);
     return newUser;
