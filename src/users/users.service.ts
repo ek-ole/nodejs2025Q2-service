@@ -34,7 +34,10 @@ export class UsersService {
     return null;
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  remove(id: string): void {
+    const userIndex = this.users.findIndex((user) => user.id === id);
+    if (userIndex > -1) {
+      this.users.splice(userIndex, 1);
+    }
   }
 }
