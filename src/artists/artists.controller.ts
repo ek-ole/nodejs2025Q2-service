@@ -3,9 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -27,16 +27,16 @@ export class ArtistsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.artistsService.findOne(+id);
+    return this.artistsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    return this.artistsService.update(+id, updateArtistDto);
+    return this.artistsService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.artistsService.remove(+id);
+    return this.artistsService.remove(id);
   }
 }
