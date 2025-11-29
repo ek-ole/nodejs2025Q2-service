@@ -31,7 +31,12 @@ export class UsersService {
   }
 
   update(id: string, updatePasswordDto: UpdatePasswordDto): User {
-    return null;
+    const user = this.findOne(id);
+    user.password = updatePasswordDto.newPassword;
+    user.version += 1;
+    user.updatedAt = Date.now();
+
+    return user;
   }
 
   remove(id: string): void {
