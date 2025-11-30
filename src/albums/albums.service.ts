@@ -7,9 +7,12 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { TracksService } from 'src/tracks/tracks.service';
 
 @Injectable()
 export class AlbumsService {
+  constructor(private tracksService: TracksService) {}
+
   private albums: Album[] = [];
   create(createAlbumDto: CreateAlbumDto): Album {
     const newAlbum = new Album();
@@ -55,6 +58,17 @@ export class AlbumsService {
     if (albumIndex === -1) {
       throw new NotFoundException('Album not found');
     }
+
+    this.tracksService.removeAlbumReferences(id);
+
     this.albums.splice(albumIndex, 1);
+  }
+
+  removeArtistReferences(artistId: string): void {
+    this.albums.forEach((album) => {
+      if (album.artistId === artistId) {
+        album.artistId = null;
+      }
+    });
   }
 }

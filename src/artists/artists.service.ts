@@ -7,9 +7,15 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { TracksService } from 'src/tracks/tracks.service';
+import { AlbumsService } from 'src/albums/albums.service';
 
 @Injectable()
 export class ArtistsService {
+  constructor(
+    private tracksService: TracksService,
+    private albumsService: AlbumsService,
+  ) {}
   private artists: Artist[] = [];
 
   create(createArtistDto: CreateArtistDto): Artist {
@@ -55,6 +61,9 @@ export class ArtistsService {
     if (artistIndex === -1) {
       throw new NotFoundException('Artist not found');
     }
+    this.tracksService.removeArtistReferences(id);
+    this.albumsService.removeArtistReferences(id);
+
     this.artists.splice(artistIndex, 1);
   }
 }
