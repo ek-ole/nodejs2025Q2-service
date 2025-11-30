@@ -2,71 +2,59 @@
 
 ## Prerequisites
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Git - [Download & Install Git](https://git-scm.com/downloads)
+- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and npm
 
-## Downloading
+## Installation
 
-```
+```bash
 git clone {repository URL}
-```
-
-## Installing NPM modules
-
-```
+cd nodejs2025Q2-service
 npm install
 ```
 
 ## Running application
 
-```
+```bash
 npm start
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+After starting on port 4000, OpenAPI documentation is available at:
+http://localhost:4000/doc/
 
 ## Testing
 
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
+```bash
+# Run all tests
 npm run test
-```
 
-To run only one of all test suites
-
-```
+# Run specific test suite
 npm run test -- <path to suite>
 ```
 
-To run all test with authorization
+## API Resources
 
-```
-npm run test:auth
-```
+- **Users** (`/user`) - Create, read, update, delete users
+- **Artists** (`/artist`) - Manage music artists
+- **Albums** (`/album`) - Manage albums with artist references  
+- **Tracks** (`/track`) - Manage tracks with artist and album references
+- **Favorites** (`/favs`) - Manage favorite artists, albums, tracks
 
-To run only specific test suite with authorization
+## Features
 
-```
-npm run test:auth -- <path to suite>
-```
+- In-memory data storage
+- Input validation and error handling
+- UUID validation for all IDs
+- Automatic reference cleanup on deletion
+- Password exclusion from API responses
 
-### Auto-fix and format
+## Development
 
-```
+```bash
+# Linting and formatting
 npm run lint
-```
-
-```
 npm run format
+
+# Development mode
+npm run start:dev
 ```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging
