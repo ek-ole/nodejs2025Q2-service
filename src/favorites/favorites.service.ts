@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { Favorites } from './entities/favorite.entity';
+import { Favorites, FavoritesResponse } from './entities/favorite.entity';
 import { ArtistsService } from 'src/artists/artists.service';
 import { AlbumsService } from 'src/albums/albums.service';
 import { TracksService } from 'src/tracks/tracks.service';
@@ -23,8 +23,45 @@ export class FavoritesService {
     tracks: [],
   };
 
-  findAll(): Favorites {
-    return this.favorites;
+  findAll(): FavoritesResponse {
+    return {
+      artists: this.favorites.artists
+        .map((id) => {
+          try {
+            return this.artistsService.findOne(id);
+          } catch (error) {
+            if (error instanceof NotFoundException) {
+              return null;
+            }
+            throw error;
+          }
+        })
+        .filter((artist) => artist !== null),
+      albums: this.favorites.albums
+        .map((id) => {
+          try {
+            return this.albumsService.findOne(id);
+          } catch (error) {
+            if (error instanceof NotFoundException) {
+              return null;
+            }
+            throw error;
+          }
+        })
+        .filter((album) => album !== null),
+      tracks: this.favorites.tracks
+        .map((id) => {
+          try {
+            return this.tracksService.findOne(id);
+          } catch (error) {
+            if (error instanceof NotFoundException) {
+              return null;
+            }
+            throw error;
+          }
+        })
+        .filter((track) => track !== null),
+    };
   }
 
   addTrack(id: string) {
@@ -95,18 +132,18 @@ export class FavoritesService {
 
   addArtist(id: string) {
     if (id.length !== 36) {
-      throw new BadRequestException('Album id is not a valid uuid');
+      throw new BadRequestException('Artist id is not a valid uuid');
     }
 
     try {
-      this.albumsService.findOne(id);
+      this.artistsService.findOne(id);
 
-      if (!this.favorites.albums.includes(id)) {
-        this.favorites.albums.push(id);
+      if (!this.favorites.artists.includes(id)) {
+        this.favorites.artists.push(id);
       }
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new UnprocessableEntityException('Album not found');
+        throw new UnprocessableEntityException('Artist not found');
       }
       throw error;
     }
@@ -114,15 +151,22 @@ export class FavoritesService {
 
   removeArtist(id: string) {
     if (id.length !== 36) {
-      throw new BadRequestException('Album id is not a valid uuid');
+      throw new BadRequestException('Artist id is not a valid uuid');
     }
 
-    const albumIndex = this.favorites.albums.indexOf(id);
+    const artistIndex = this.favorites.artists.indexOf(id);
 
-    if (albumIndex === -1) {
-      throw new NotFoundException('Album is not in favorites');
+    if (artistIndex === -1) {
+      throw new NotFoundException('Artist is not in favorites');
     }
 
-    this.favorites.albums.splice(albumIndex, 1);
+    this.favorites.artists.splice(artistIndex, 1);
+  }
+
+  getDebugInfo() {
+    return {
+      storedArtistIds: this.favorites.artists,
+      existingArtists: this.artistsService.findAll().map((a) => a.id),
+    };
   }
 }

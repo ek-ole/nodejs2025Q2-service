@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Param, Delete, HttpCode } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 
-@Controller('favorites')
+@Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
@@ -44,5 +44,10 @@ export class FavoritesController {
   @HttpCode(204)
   removeArtist(@Param('id') id: string) {
     return this.favoritesService.removeArtist(id);
+  }
+
+  @Get('debug')
+  getDebug() {
+    return this.favoritesService.getDebugInfo();
   }
 }
