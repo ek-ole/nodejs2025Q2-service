@@ -61,18 +61,68 @@ export class FavoritesService {
   }
 
   addAlbum(id: string) {
-    return `This action returns a #${id} favorite`;
+    if (id.length !== 36) {
+      throw new BadRequestException('Album id is not a valid uuid');
+    }
+
+    try {
+      this.albumsService.findOne(id);
+
+      if (!this.favorites.albums.includes(id)) {
+        this.favorites.albums.push(id);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new UnprocessableEntityException('Album not found');
+      }
+      throw error;
+    }
   }
 
   removeAlbum(id: string) {
-    return `This action removes a #${id} favorite`;
+    if (id.length !== 36) {
+      throw new BadRequestException('Album id is not a valid uuid');
+    }
+
+    const albumIndex = this.favorites.albums.indexOf(id);
+
+    if (albumIndex === -1) {
+      throw new NotFoundException('Album is not in favorites');
+    }
+
+    this.favorites.albums.splice(albumIndex, 1);
   }
 
   addArtist(id: string) {
-    return `This action returns a #${id} favorite`;
+    if (id.length !== 36) {
+      throw new BadRequestException('Album id is not a valid uuid');
+    }
+
+    try {
+      this.albumsService.findOne(id);
+
+      if (!this.favorites.albums.includes(id)) {
+        this.favorites.albums.push(id);
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new UnprocessableEntityException('Album not found');
+      }
+      throw error;
+    }
   }
 
   removeArtist(id: string) {
-    return `This action removes a #${id} favorite`;
+    if (id.length !== 36) {
+      throw new BadRequestException('Album id is not a valid uuid');
+    }
+
+    const albumIndex = this.favorites.albums.indexOf(id);
+
+    if (albumIndex === -1) {
+      throw new NotFoundException('Album is not in favorites');
+    }
+
+    this.favorites.albums.splice(albumIndex, 1);
   }
 }

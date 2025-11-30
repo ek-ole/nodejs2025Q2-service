@@ -1,13 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  HttpCode,
-} from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete, HttpCode } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 
 @Controller('favorites')
@@ -40,7 +31,7 @@ export class FavoritesController {
   @Delete('album/:id')
   @HttpCode(204)
   removeAlbum(@Param('id') id: string) {
-    return this.favoritesService.removeAlbumk(id);
+    return this.favoritesService.removeAlbum(id);
   }
 
   @Post('artist/:id')
