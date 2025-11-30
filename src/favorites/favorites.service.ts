@@ -47,7 +47,17 @@ export class FavoritesService {
   }
 
   removeTrack(id: string) {
-    return `This action removes a #${id} favorite`;
+    if (id.length !== 36) {
+      throw new BadRequestException('Track id is not a valid uuid');
+    }
+
+    const trackIndex = this.favorites.tracks.indexOf(id);
+
+    if (trackIndex === -1) {
+      throw new NotFoundException('Track is not in favorites');
+    }
+
+    this.favorites.tracks.splice(trackIndex, 1);
   }
 
   addAlbum(id: string) {
