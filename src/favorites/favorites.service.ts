@@ -162,11 +162,4 @@ export class FavoritesService {
 
     this.favorites.artists.splice(artistIndex, 1);
   }
-
-  getDebugInfo() {
-    return {
-      storedArtistIds: this.favorites.artists,
-      existingArtists: this.artistsService.findAll().map((a) => a.id),
-    };
-  }
 }
