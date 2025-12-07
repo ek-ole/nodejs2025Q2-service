@@ -9,10 +9,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "App"
-        ]
+        }
       }
     },
     "/user": {
@@ -23,10 +20,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Users"
-        ]
+        }
       },
       "post": {
         "operationId": "UsersController_create",
@@ -45,10 +39,7 @@
           "201": {
             "description": ""
           }
-        },
-        "tags": [
-          "Users"
-        ]
+        }
       }
     },
     "/user/{id}": {
@@ -68,10 +59,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Users"
-        ]
+        }
       },
       "put": {
         "operationId": "UsersController_update",
@@ -99,10 +87,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Users"
-        ]
+        }
       },
       "delete": {
         "operationId": "UsersController_remove",
@@ -120,10 +105,7 @@
           "204": {
             "description": ""
           }
-        },
-        "tags": [
-          "Users"
-        ]
+        }
       }
     },
     "/artist": {
@@ -144,10 +126,7 @@
           "201": {
             "description": ""
           }
-        },
-        "tags": [
-          "Artists"
-        ]
+        }
       },
       "get": {
         "operationId": "ArtistsController_findAll",
@@ -156,10 +135,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Artists"
-        ]
+        }
       }
     },
     "/artist/{id}": {
@@ -179,10 +155,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Artists"
-        ]
+        }
       },
       "put": {
         "operationId": "ArtistsController_update",
@@ -210,10 +183,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Artists"
-        ]
+        }
       },
       "delete": {
         "operationId": "ArtistsController_remove",
@@ -231,10 +201,7 @@
           "204": {
             "description": ""
           }
-        },
-        "tags": [
-          "Artists"
-        ]
+        }
       }
     },
     "/track": {
@@ -255,10 +222,7 @@
           "201": {
             "description": ""
           }
-        },
-        "tags": [
-          "Tracks"
-        ]
+        }
       },
       "get": {
         "operationId": "TracksController_findAll",
@@ -267,10 +231,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Tracks"
-        ]
+        }
       }
     },
     "/track/{id}": {
@@ -290,10 +251,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Tracks"
-        ]
+        }
       },
       "put": {
         "operationId": "TracksController_update",
@@ -321,10 +279,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Tracks"
-        ]
+        }
       },
       "delete": {
         "operationId": "TracksController_remove",
@@ -342,10 +297,7 @@
           "204": {
             "description": ""
           }
-        },
-        "tags": [
-          "Tracks"
-        ]
+        }
       }
     },
     "/album": {
@@ -366,10 +318,7 @@
           "201": {
             "description": ""
           }
-        },
-        "tags": [
-          "Albums"
-        ]
+        }
       },
       "get": {
         "operationId": "AlbumsController_findAll",
@@ -378,10 +327,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Albums"
-        ]
+        }
       }
     },
     "/album/{id}": {
@@ -401,10 +347,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Albums"
-        ]
+        }
       },
       "put": {
         "operationId": "AlbumsController_update",
@@ -432,10 +375,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Albums"
-        ]
+        }
       },
       "delete": {
         "operationId": "AlbumsController_remove",
@@ -453,10 +393,7 @@
           "204": {
             "description": ""
           }
-        },
-        "tags": [
-          "Albums"
-        ]
+        }
       }
     },
     "/favs": {
@@ -467,10 +404,7 @@
           "200": {
             "description": ""
           }
-        },
-        "tags": [
-          "Favorites"
-        ]
+        }
       }
     },
     "/favs/track/{id}": {
@@ -490,10 +424,7 @@
           "201": {
             "description": ""
           }
-        },
-        "tags": [
-          "Favorites"
-        ]
+        }
       },
       "delete": {
         "operationId": "FavoritesController_removeTrack",
@@ -511,10 +442,7 @@
           "204": {
             "description": ""
           }
-        },
-        "tags": [
-          "Favorites"
-        ]
+        }
       }
     },
     "/favs/album/{id}": {
@@ -534,10 +462,7 @@
           "201": {
             "description": ""
           }
-        },
-        "tags": [
-          "Favorites"
-        ]
+        }
       },
       "delete": {
         "operationId": "FavoritesController_removeAlbum",
@@ -555,10 +480,7 @@
           "204": {
             "description": ""
           }
-        },
-        "tags": [
-          "Favorites"
-        ]
+        }
       }
     },
     "/favs/artist/{id}": {
@@ -578,10 +500,7 @@
           "201": {
             "description": ""
           }
-        },
-        "tags": [
-          "Favorites"
-        ]
+        }
       },
       "delete": {
         "operationId": "FavoritesController_removeArtist",
@@ -599,10 +518,7 @@
           "204": {
             "description": ""
           }
-        },
-        "tags": [
-          "Favorites"
-        ]
+        }
       }
     }
   },
