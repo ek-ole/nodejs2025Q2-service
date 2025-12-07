@@ -3,7 +3,7 @@ import { AlbumsService } from './albums.service';
 import { AlbumsController } from './albums.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Album } from './entities/album.entity';
-import { Track } from 'src/tracks/entities/track.entity';
+import { Track } from '../tracks/entities/track.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Album, Track])],

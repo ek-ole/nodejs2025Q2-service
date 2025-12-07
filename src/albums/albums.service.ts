@@ -8,7 +8,7 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Track } from 'src/tracks/entities/track.entity';
+import { Track } from '../tracks/entities/track.entity';
 
 @Injectable()
 export class AlbumsService {

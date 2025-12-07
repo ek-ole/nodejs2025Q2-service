@@ -1,5 +1,10 @@
 import { DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
+import { Album } from './albums/entities/album.entity';
+import { Artist } from './artists/entities/artist.entity';
+import { Favorite } from './favorites/entities/favorite.entity';
+import { Track } from './tracks/entities/track.entity';
+import { User } from './users/entities/user.entity';
 
 dotenv.config();
 
@@ -10,7 +15,7 @@ export const typeormConfig: DataSourceOptions = {
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_DATABASE || 'library',
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  entities: [User, Artist, Album, Track, Favorite],
   synchronize: process.env.DB_SYNCHRONIZE === 'true',
   logging: process.env.TYPEORM_LOGGING === 'true',
 };

@@ -7,9 +7,9 @@ import {
 import { Favorite } from './entities/favorite.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Artist } from 'src/artists/entities/artist.entity';
-import { Album } from 'src/albums/entities/album.entity';
-import { Track } from 'src/tracks/entities/track.entity';
+import { Artist } from '../artists/entities/artist.entity';
+import { Album } from '../albums/entities/album.entity';
+import { Track } from '../tracks/entities/track.entity';
 
 @Injectable()
 export class FavoritesService {

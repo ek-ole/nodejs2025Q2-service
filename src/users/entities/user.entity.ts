@@ -21,21 +21,9 @@ export class User {
   @Column({ type: 'int', default: 1 })
   version: number;
 
-  @CreateDateColumn({
-    type: 'bigint',
-    transformer: {
-      to: (value: Date) => value.getTime(),
-      from: (value: number) => new Date(value),
-    },
-  })
-  createdAt: number;
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 
-  @UpdateDateColumn({
-    type: 'bigint',
-    transformer: {
-      to: (value: Date) => value.getTime(),
-      from: (value: number) => new Date(value),
-    },
-  })
-  updatedAt: number;
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
 }
