@@ -6,64 +6,61 @@ import {
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
-import { v4 as uuidv4 } from 'uuid';
-import { TracksService } from 'src/tracks/tracks.service';
-import { AlbumsService } from 'src/albums/albums.service';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from 'src/albums/entities/album.entity';
+import { Track } from 'src/tracks/entities/track.entity';
 
 @Injectable()
 export class ArtistsService {
   constructor(
-    private tracksService: TracksService,
-    private albumsService: AlbumsService,
+    @InjectRepository(Artist)
+    private artistsRepository: Repository<Artist>,
+    @InjectRepository(Track)
+    private tracksRepository: Repository<Track>,
+    @InjectRepository(Album)
+    private albumsRepository: Repository<Album>,
   ) {}
-  private artists: Artist[] = [];
 
-  create(createArtistDto: CreateArtistDto): Artist {
-    const newArtist = new Artist();
-    newArtist.id = uuidv4();
-    newArtist.name = createArtistDto.name;
-    newArtist.grammy = createArtistDto.grammy;
-
-    this.artists.push(newArtist);
-    return newArtist;
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
+    const artist = this.artistsRepository.create(createArtistDto);
+    return await this.artistsRepository.save(artist);
   }
 
-  findAll(): Artist[] {
-    return this.artists;
+  async findAll(): Promise<Artist[]> {
+    return this.artistsRepository.find();
   }
 
-  findOne(id: string): Artist {
+  async findOne(id: string): Promise<Artist> {
     if (id.length !== 36) {
       throw new BadRequestException('Artist id is not a valid uuid');
     }
-    const artist = this.artists.find((artist) => artist.id === id);
+    const artist = await this.artistsRepository.findOne({ where: { id } });
     if (!artist) {
       throw new NotFoundException('Artist not found');
     }
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto): Artist {
-    const artist = this.findOne(id);
+  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+    const artist = await this.findOne(id);
 
-    artist.name = updateArtistDto.name;
-    artist.grammy = updateArtistDto.grammy;
+    Object.assign(artist, updateArtistDto);
 
-    return artist;
+    return await this.artistsRepository.save(artist);
   }
 
-  remove(id: string): void {
+  async remove(id: string): Promise<void> {
     if (id.length !== 36) {
       throw new BadRequestException('Artist id is not a valid uuid');
     }
 
-    const artistIndex = this.artists.findIndex((artist) => artist.id === id);
-    if (artistIndex === -1) {
+    await this.tracksRepository.update({ artistId: id }, { artistId: null });
+    await this.albumsRepository.update({ artistId: id }, { artistId: null });
+
+    const result = await this.artistsRepository.delete(id);
+    if ((await result).affected === 0) {
       throw new NotFoundException('Artist not found');
     }
-    this.tracksService.removeArtistReferences(id);
-    this.albumsService.removeArtistReferences(id);
-
-    this.artists.splice(artistIndex, 1);
   }
 }
