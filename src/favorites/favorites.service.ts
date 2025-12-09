@@ -26,6 +26,7 @@ export class FavoritesService {
 
   private async getOrCreateFavorites(): Promise<Favorite> {
     let favorites = await this.favoritesRepository.findOne({
+      where: {},
       relations: ['artists', 'albums', 'tracks'],
     });
 
