@@ -31,7 +31,9 @@ export class UsersService {
     if (id.length !== 36) {
       throw new BadRequestException('User id is not a valid uuid');
     }
-    const user = this.usersRepository.findOne({ where: { id } });
+
+    const user = await this.usersRepository.findOne({ where: { id } });
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
