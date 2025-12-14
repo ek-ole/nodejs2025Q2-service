@@ -8,9 +8,11 @@ import { AlbumsModule } from './albums/albums.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormConfig } from './typeorm.config';
+import { LoggerModule } from './commom/logger/logger.module';
 
 @Module({
   imports: [
+    LoggerModule,
     TypeOrmModule.forRoot(typeormConfig),
     UsersModule,
     ArtistsModule,
