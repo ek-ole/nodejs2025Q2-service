@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { writeFileSync } from 'fs';
 import { AppDataSource } from 'src/data-source';
 import { LoggingService } from './commom/logger/logging.service';
+import { HttpExceptionFilter } from './commom/filters/http-exception.filter';
 
 async function bootstrap() {
   const tempLogger = new LoggingService();
@@ -29,6 +30,8 @@ async function bootstrap() {
   console.log('Starting NestJS application...');
 
   const app = await NestFactory.create(AppModule);
+  const loggingService = app.get(LoggingService);
+  app.useGlobalFilters(new HttpExceptionFilter(loggingService));
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
