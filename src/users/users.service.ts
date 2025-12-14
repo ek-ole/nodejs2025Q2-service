@@ -35,14 +35,29 @@ export class UsersService {
 
   async findOne(id: string): Promise<User> {
     if (id.length !== 36) {
+      this.loggingService.error(
+        `Invalid UUID format for user id: ${id}`,
+        undefined,
+        'UsersService',
+      );
       throw new BadRequestException('User id is not a valid uuid');
     }
 
     const user = await this.usersRepository.findOne({ where: { id } });
 
     if (!user) {
+      this.loggingService.error(
+        `User not found with id: ${id}`,
+        undefined,
+        'UsersService',
+      );
       throw new NotFoundException('User not found');
     }
+
+    this.loggingService.debug(
+      `Found user with id: ${id}, login: ${user.login}`,
+      'UsersService',
+    );
     return user;
   }
 
