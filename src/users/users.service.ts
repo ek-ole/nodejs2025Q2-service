@@ -1,3 +1,4 @@
+import { LoggingService } from 'src/commom/logger/logging.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
@@ -15,9 +16,14 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private readonly loggingService: LoggingService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    this.loggingService.info(
+      `Creating user with login: ${createUserDto.login}`,
+      'UsersService',
+    );
     const user = this.usersRepository.create(createUserDto);
 
     return await this.usersRepository.save(user);
