@@ -13,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { LoggingService } from 'src/commom/logger/logging.service';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -21,6 +22,7 @@ export class AuthController {
     private readonly loggingService: LoggingService,
   ) {}
 
+  @Public()
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -40,6 +42,7 @@ export class AuthController {
     return tokens;
   }
 
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -59,6 +62,7 @@ export class AuthController {
     return tokens;
   }
 
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -72,6 +76,7 @@ export class AuthController {
     return tokens;
   }
 
+  @Public()
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   async logout(@Body() refreshTokenDto: RefreshTokenDto): Promise<void> {
