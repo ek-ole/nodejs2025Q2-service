@@ -6,6 +6,7 @@ import { writeFileSync } from 'fs';
 import { AppDataSource } from 'src/data-source';
 import { LoggingService } from './commom/logger/logging.service';
 import { HttpExceptionFilter } from './commom/filters/http-exception.filter';
+import { GlobalErrorHandler } from './commom/logger/global-error.handler';
 
 async function bootstrap() {
   const tempLogger = new LoggingService();
@@ -31,6 +32,9 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   const loggingService = app.get(LoggingService);
+
+  GlobalErrorHandler.initialize(loggingService);
+
   app.useGlobalFilters(new HttpExceptionFilter(loggingService));
   app.useGlobalPipes(new ValidationPipe());
 
