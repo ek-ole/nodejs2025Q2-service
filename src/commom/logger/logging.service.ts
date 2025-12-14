@@ -1,11 +1,11 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, Scope } from '@nestjs/common';
 import { getLoggerConfig, LoggerConfig } from './logger.config';
 import { LogLevel } from './log-level.enum';
 import * as fs from 'fs';
 import * as path from 'path';
 
 @Injectable({ scope: Scope.DEFAULT })
-export class LoggingService {
+export class LoggingService implements OnModuleDestroy {
   private config: LoggerConfig;
   private errorLogStream: fs.WriteStream | null = null;
   private combinedLogStream: fs.WriteStream | null = null;
@@ -152,5 +152,9 @@ export class LoggingService {
 
   verbose(message: string, context?: string): void {
     this.log(LogLevel.VERBOSE, message, undefined, context);
+  }
+
+  async onModuleDestroy() {
+    console.log('Closing log files...');
   }
 }
