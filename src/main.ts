@@ -4,8 +4,12 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { writeFileSync } from 'fs';
 import { AppDataSource } from 'src/data-source';
+import { LoggingService } from './commom/logger/logging.service';
 
 async function bootstrap() {
+  const tempLogger = new LoggingService();
+  tempLogger.info('Starting application bootstrap...', 'Bootstrap');
+
   console.log('Starting migrations...');
   try {
     await AppDataSource.initialize();
@@ -39,5 +43,10 @@ async function bootstrap() {
   SwaggerModule.setup('doc', app, document);
 
   await app.listen(4000);
+  tempLogger.info(
+    `Application is running on: ${await app.getUrl()}`,
+    'Bootstrap',
+  );
+  tempLogger.info('Swagger documentation available at: /doc', 'Bootstrap');
 }
 bootstrap();
