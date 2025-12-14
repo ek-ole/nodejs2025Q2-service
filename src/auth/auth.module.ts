@@ -8,6 +8,7 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
+import { LoggerModule } from 'src/commom/logger/logger.module';
 
 @Module({
   imports: [
@@ -20,11 +21,11 @@ import { AuthGuard } from './guards/auth.guard';
         },
       }),
     }),
+    LoggerModule,
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
-    JwtAuthGuard,
     JwtAuthGuard,
     {
       provide: APP_GUARD,

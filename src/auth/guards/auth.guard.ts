@@ -1,14 +1,19 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { JwtService } from '@nestjs/jwt';
+import { LoggingService } from 'src/commom/logger/logging.service';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard extends JwtAuthGuard {
   constructor(
     private readonly reflector: Reflector,
-    private readonly jwtAuthGuard: JwtAuthGuard,
-  ) {}
+    jwtService: JwtService,
+    loggingService: LoggingService,
+  ) {
+    super(jwtService, loggingService);
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -20,6 +25,6 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    return this.jwtAuthGuard.canActivate(context);
+    return super.canActivate(context);
   }
 }
