@@ -1,0 +1,82 @@
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { TokensDto } from './dto/tokens.dto';
+import { LoggingService } from 'src/commom/logger/logging.service';
+
+@Controller('auth')
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly loggingService: LoggingService,
+  ) {}
+
+  @Post('signup')
+  @HttpCode(HttpStatus.CREATED)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async signup(@Body() signupDto: SignupDto): Promise<TokensDto> {
+    this.loggingService.info(
+      `Signup request for login: ${signupDto.login}`,
+      'AuthController',
+    );
+
+    const tokens = await this.authService.signup(signupDto);
+
+    this.loggingService.info(
+      `Signup successful for login: ${signupDto.login}`,
+      'AuthController',
+    );
+
+    return tokens;
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async login(@Body() loginDto: LoginDto): Promise<TokensDto> {
+    this.loggingService.info(
+      `Login request for login: ${loginDto.login}`,
+      'AuthController',
+    );
+
+    const tokens = await this.authService.login(loginDto);
+
+    this.loggingService.info(
+      `Login successful for login: ${loginDto.login}`,
+      'AuthController',
+    );
+
+    return tokens;
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {
+    this.loggingService.info('Refresh token request', 'AuthController');
+
+    const tokens = await this.authService.refresh(refreshTokenDto);
+
+    this.loggingService.info('Token refresh successful', 'AuthController');
+
+    return tokens;
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logout(@Body() refreshTokenDto: RefreshTokenDto): Promise<void> {
+    this.loggingService.info('Logout request', 'AuthController');
+
+    await this.authService.logout(refreshTokenDto.refreshToken);
+  }
+}

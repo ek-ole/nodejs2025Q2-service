@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeormConfig } from './typeorm.config';
 import { LoggerModule } from './commom/logger/logger.module';
 import { LoggingMiddleware } from './commom/middleware/logging.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LoggingMiddleware } from './commom/middleware/logging.middleware';
     TracksModule,
     AlbumsModule,
     FavoritesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
