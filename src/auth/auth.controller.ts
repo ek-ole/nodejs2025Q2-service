@@ -8,6 +8,7 @@ import {
   ValidationPipe,
   ClassSerializerInterceptor,
   UseInterceptors,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
@@ -69,9 +70,12 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {
     this.loggingService.info('Refresh token request', 'AuthController');
+
+    if (!refreshTokenDto || !refreshTokenDto.refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
 
     const tokens = await this.authService.refresh(refreshTokenDto);
 

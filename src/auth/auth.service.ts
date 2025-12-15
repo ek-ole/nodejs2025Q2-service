@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -110,17 +111,22 @@ export class AuthService {
     const { refreshToken } = refreshTokenDto;
 
     this.loggingService.info('Attempting token refresh', 'AuthService');
+    console.log('Refresh token received:', refreshToken);
 
     const tokenEntity = await this.validateRefreshToken(refreshToken);
+    console.log('Token entity found:', tokenEntity);
 
     await this.refreshTokensRepository.delete(tokenEntity.id);
+
+    const newTokens = await this.generateTokens(tokenEntity.user);
+    console.log('New tokens generated:', newTokens);
 
     this.loggingService.info(
       `Token refresh successful for user: ${tokenEntity.user.login}`,
       'AuthService',
     );
 
-    return this.generateTokens(tokenEntity.user);
+    return newTokens;
   }
 
   async logout(refreshToken: string): Promise<void> {
@@ -191,12 +197,12 @@ export class AuthService {
     });
 
     if (!refreshToken) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new ForbiddenException('Invalid refresh token');
     }
 
     if (refreshToken.expiresAt < new Date()) {
       await this.refreshTokensRepository.delete(refreshToken.id);
-      throw new UnauthorizedException('Refresh token expired');
+      throw new ForbiddenException('Refresh token expired');
     }
 
     return refreshToken;
