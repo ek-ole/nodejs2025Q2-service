@@ -1,5 +1,13 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity('artists')
 export class Artist {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'varchar', length: 255 })
   name: string;
+
+  @Column({ type: 'boolean', default: false })
   grammy: boolean;
 }
