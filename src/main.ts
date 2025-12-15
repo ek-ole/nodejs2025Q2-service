@@ -4,8 +4,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { writeFileSync } from 'fs';
 import { AppDataSource } from 'src/data-source';
+import { LoggingService } from './commom/logger/logging.service';
+import { HttpExceptionFilter } from './commom/filters/http-exception.filter';
+import { GlobalErrorHandler } from './commom/logger/global-error.handler';
 
 async function bootstrap() {
+  const tempLogger = new LoggingService();
+  tempLogger.info('Starting application bootstrap...', 'Bootstrap');
+
   console.log('Starting migrations...');
   try {
     await AppDataSource.initialize();
@@ -25,12 +31,18 @@ async function bootstrap() {
   console.log('Starting NestJS application...');
 
   const app = await NestFactory.create(AppModule);
+  const loggingService = app.get(LoggingService);
+
+  GlobalErrorHandler.initialize(loggingService);
+
+  app.useGlobalFilters(new HttpExceptionFilter(loggingService));
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
     .setDescription('The home libray API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -39,5 +51,10 @@ async function bootstrap() {
   SwaggerModule.setup('doc', app, document);
 
   await app.listen(4000);
+  tempLogger.info(
+    `Application is running on: ${await app.getUrl()}`,
+    'Bootstrap',
+  );
+  tempLogger.info('Swagger documentation available at: /doc', 'Bootstrap');
 }
 bootstrap();

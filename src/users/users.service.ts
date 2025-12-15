@@ -1,3 +1,4 @@
+import { LoggingService } from 'src/commom/logger/logging.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
@@ -15,9 +16,14 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private readonly loggingService: LoggingService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    this.loggingService.info(
+      `Creating user with login: ${createUserDto.login}`,
+      'UsersService',
+    );
     const user = this.usersRepository.create(createUserDto);
 
     return await this.usersRepository.save(user);
@@ -29,14 +35,29 @@ export class UsersService {
 
   async findOne(id: string): Promise<User> {
     if (id.length !== 36) {
+      this.loggingService.error(
+        `Invalid UUID format for user id: ${id}`,
+        undefined,
+        'UsersService',
+      );
       throw new BadRequestException('User id is not a valid uuid');
     }
 
     const user = await this.usersRepository.findOne({ where: { id } });
 
     if (!user) {
+      this.loggingService.error(
+        `User not found with id: ${id}`,
+        undefined,
+        'UsersService',
+      );
       throw new NotFoundException('User not found');
     }
+
+    this.loggingService.debug(
+      `Found user with id: ${id}, login: ${user.login}`,
+      'UsersService',
+    );
     return user;
   }
 
