@@ -4,6 +4,8 @@
 [![Docker Image Size](https://img.shields.io/docker/image-size/vernissage/library-app)](https://hub.docker.com/r/vernissage/library-app)
 [![Docker Pulls](https://img.shields.io/docker/pulls/vernissage/library-app)](https://hub.docker.com/r/vernissage/library-app)
 
+A simple REST API for managing your personal music library.
+
 ## Prerequisites
 
 - **Git** - [Download & Install Git](https://git-scm.com/downloads)
@@ -15,73 +17,40 @@
 - **Backend**: NestJS, TypeScript
 - **Database**: PostgreSQL (Docker container)
 - **ORM**: TypeORM
+- **Authentication**: JWT (Access & Refresh tokens)
+- **Password Security**: bcrypt hashing
+- **Logging**: Custom LoggingService with file rotation
+- **Error Handling**: Custom Exception Filter
 - **Containerization**: Docker/Podman
 - **API Documentation**: Swagger/OpenAPI
 - **Container Registry**: Docker Hub
+- **Event Handling**: uncaughtException & unhandledRejection
 
-## Docker Images
+## 🚀 Start
 
-Pre-built Docker images are available on Docker Hub:
-
-### Application Image
+### Option 1: The Easiest Way (Docker Compose)
 ```bash
-# Pull the application image
-podman pull vernissage/library-app:latest
-
-# Or with Docker
-docker pull vernissage/library-app:latest
-```
-
-### PostgreSQL Image (custom tagged)
-```bash
-podman pull vernissage/library-postgres:16-alpine
-```
-
-**Docker Hub Repositories:**
-- Application: https://hub.docker.com/r/vernissage/library-app
-- PostgreSQL: https://hub.docker.com/r/vernissage/library-postgres
-
-## Quick Start with Docker/Podman
-
-### Option 1: Using Pre-built Images (Recommended)
-
-```bash
-# Create network
-podman network create app-network
-
-# Run PostgreSQL
-podman run -d \
-  --name library-postgres \
-  --network app-network \
-  -p 5432:5432 \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=library \
-  -v postgres-data:/var/lib/postgresql/data \
-  --restart unless-stopped \
-  vernissage/library-postgres:16-alpine
-
-# Run Application
-podman run -d \
-  --name library-app \
-  --network app-network \
-  -p 4000:4000 \
-  --env-file .env \
-  --restart unless-stopped \
-  vernissage/library-app:latest
-```
-
-### Option 2: Building from Source
-
-```bash
-# Clone repository
-git clone {repository URL}
+# 1. Clone the repository
+git clone https://github.com/your-username/nodejs2025Q2-service.git
 cd nodejs2025Q2-service
 
-# Create network
+# 2. Copy environment variables
+cp .env.example .env
+
+# 3. Start everything with one command
+podman-compose up -d
+
+# 4. Open in browser
+# API Documentation: http://localhost:4000/doc
+# API: http://localhost:4000
+```
+
+### Option 2: Using Pre-built Images from Docker Hub
+```bash
+# 1. Create network
 podman network create app-network
 
-# Start PostgreSQL container
+# 2. Run PostgreSQL
 podman run -d \
   --name library-postgres \
   --network app-network \
@@ -90,134 +59,105 @@ podman run -d \
   -e POSTGRES_PASSWORD=postgres \
   -e POSTGRES_DB=library \
   -v postgres-data:/var/lib/postgresql/data \
-  --restart unless-stopped \
-  postgres:16-alpine
+  docker.io/library/postgres:16-alpine
 
-# Build application image
-podman build -t library-app .
-
-# Start application container
+# 3. Run application
 podman run -d \
   --name library-app \
   --network app-network \
   -p 4000:4000 \
-  --env-file .env \
-  --restart unless-stopped \
-  library-app
+  -e DB_HOST=library-postgres \
+  -e DB_PORT=5432 \
+  -e DB_USERNAME=postgres \
+  -e DB_PASSWORD=postgres \
+  -e DB_DATABASE=library \
+  docker.io/vernissage/library-app:latest
 ```
 
-### Option 3: Docker Compose (if available)
-
-```yaml
-# docker-compose.yml
-version: '3.8'
-
-networks:
-  app-network:
-    driver: bridge
-
-services:
-  postgres:
-    image: vernissage/library-postgres:16-alpine
-    container_name: library-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: library
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - app-network
-
-  app:
-    image: vernissage/library-app:latest
-    container_name: library-app
-    restart: unless-stopped
-    ports:
-      - "4000:4000"
-    environment:
-      DB_HOST: library-postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_DATABASE: library
-      DB_SYNCHRONIZE: "true"
-      TYPEORM_LOGGING: "true"
-    depends_on:
-      - postgres
-    networks:
-      - app-network
-
-volumes:
-  postgres-data:
-```
-
+### Option 3: For Development (Local Setup)
 ```bash
-# Using docker-compose
-docker-compose up -d
+# 1. Install dependencies
+npm install
 
-# Or with podman-compose
-podman-compose up -d
+# 2. Copy environment configuration
+cp .env.example .env
+
+# 3. Start the database only
+podman-compose up -d postgres
+
+# 4. Run the application
+npm run start:dev
+
+# 5. Application available at http://localhost:4000
 ```
 
-## Verify Installation
+## ✅ Verify Installation
 
+After starting, open in your browser:
+- [API Documentation](http://localhost:4000/doc) - See all available requests
+- [Health Check](http://localhost:4000) - Should show "Hello World!"
+
+Or check via command line:
 ```bash
-# Check running containers
+# Check if containers are running
 podman ps
 
 # View application logs
 podman logs library-app
 
-# Access the application
-# API: http://localhost:4000
-# Documentation: http://localhost:4000/doc
+# Test API endpoint
+curl http://localhost:4000
 ```
 
-## Database Management
+## 📦 What's Running
 
-### Access PostgreSQL
+| Service | Port | Purpose |
+|---------|------|---------|
+| PostgreSQL Database | 5432 | Stores all library data |
+| Node.js Application | 4000 | REST API server |
+| Swagger UI | 4000/doc | Interactive API documentation |
+
+## 🐳 Docker Images on Docker Hub
+
+Pre-built images are available for quick deployment:
+
+- **Application**: `docker.io/vernissage/library-app:latest`
+- **PostgreSQL**: `docker.io/library/postgres:16-alpine`
+
+Pull commands:
+```bash
+# Pull the application image
+podman pull docker.io/vernissage/library-app:latest
+
+# Pull PostgreSQL
+podman pull docker.io/library/postgres:16-alpine
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── main.ts                    # Application entry point
+├── app.module.ts             # Main module configuration
+├── typeorm.config.ts         # Database setup
+├── users/                    # User management
+├── artists/                  # Music artists
+├── albums/                   # Music albums
+├── tracks/                   # Music tracks
+└── favorites/                # Favorite items
+```
+
+## 🔧 Environment Configuration
+
+The project includes `.env.example` with all required variables. Copy it to create your `.env` file:
 
 ```bash
-# Connect to PostgreSQL container
-podman exec -it library-postgres psql -U postgres -d library
-
-# Common commands inside psql:
-# \dt - list tables
-# \d users - describe users table
-# SELECT * FROM users; - view users
-# \q - exit
+cp .env.example .env
 ```
 
-### Reset Database
-
-```bash
-# Drop all tables and recreate
-podman exec library-postgres psql -U postgres -d library -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
-```
-
-## Local Development (without Docker)
-
-```bash
-# Install dependencies
-npm install
-
-# Start PostgreSQL locally or use Docker
-# Update .env file with DB_HOST=localhost
-
-# Run application
-npm run start:dev
-```
-
-## Environment Variables
-
-Create `.env` file in project root:
-
+Edit `.env` if needed (usually defaults work fine):
 ```env
-# PostgreSQL Database
+# Database Configuration
 DB_HOST=library-postgres
 DB_PORT=5432
 DB_USERNAME=postgres
@@ -230,104 +170,82 @@ PORT=4000
 NODE_ENV=development
 
 # TypeORM
-TYPEORM_CONNECTION=postgres
 TYPEORM_LOGGING=true
 ```
 
-Copy `.env.example` to `.env` and modify as needed.
+## 📊 Available Resources
 
-## API Resources
+- **Users** (`/user`) - Create and manage users
+- **Artists** (`/artist`) - Music artists information
+- **Albums** (`/album`) - Music albums with year and artist
+- **Tracks** (`/track`) - Music tracks with duration
+- **Favorites** (`/favs`) - Mark artists, albums, tracks as favorites
 
-- **Users** (`/user`) - User management with password hashing
-- **Artists** (`/artist`) - Music artists with Grammy awards
-- **Albums** (`/album`) - Albums with artist relationships
-- **Tracks** (`/track`) - Tracks with artist and album references
-- **Favorites** (`/favs`) - Favorite artists, albums, tracks (Many-to-Many)
-
-## Project Structure
-
-```
-src/
-├── main.ts                    # Application entry point
-├── app.module.ts             # Root module with TypeORM
-├── typeorm.config.ts         # Database configuration
-├── users/                    # User module
-│   ├── entities/user.entity.ts
-│   ├── users.service.ts
-│   └── users.controller.ts
-├── artists/                  # Artist module
-├── albums/                   # Album module  
-├── tracks/                   # Track module
-└── favorites/                # Favorites module
-```
-
-## Testing
+## 🛠️ Development Commands
 
 ```bash
-# Run all tests
+# Install dependencies
+npm install
+
+# Start in development mode (with auto-reload)
+npm run start:dev
+
+# Build for production
+npm run build
+
+# Run tests
 npm run test
 
-# Run specific test suite
-npm run test -- <path to suite>
+# Fix code style issues
+npm run lint
 
-# Security audit
+# Run security audit
 npm run audit
-npm run audit:fix
 ```
 
-## Building and Pushing Docker Images
-
-### Build Application Image
+## 🔍 Database Access
 
 ```bash
-podman build -t library-app .
-# or with custom name
-podman build -t yourusername/library-app:latest .
+# Connect to PostgreSQL
+podman exec -it library-postgres psql -U postgres -d library
+
+# Inside psql, useful commands:
+# \dt          - List all tables
+# \d users     - Show users table structure
+# SELECT * FROM users; - View all users
+# \q           - Exit
 ```
 
-### Tag and Push to Registry
+## 🐳 Docker Commands Reference
 
 ```bash
-# Tag the image
-podman tag library-app:latest yourusername/library-app:latest
+# Start all services
+podman-compose up -d
 
-# Push to Docker Hub
-podman push yourusername/library-app:latest
+# Stop all services
+podman-compose down
 
-# Push to GitHub Container Registry
-podman tag library-app:latest ghcr.io/yourusername/library-app:latest
-podman push ghcr.io/yourusername/library-app:latest
+# View logs
+podman-compose logs
+
+# Rebuild and restart
+podman-compose up -d --build
+
+# Stop only one service
+podman-compose stop postgres
+
+# Remove all containers and volumes
+podman-compose down -v
 ```
 
-## Security Notes
+## 📝 API Documentation
 
-- `.env` file is excluded from git (see `.gitignore`)
-- Database passwords stored in environment variables
-- Application runs in isolated Docker network
-- Auto-restart on failure
-- Regular security audits with npm audit
+Interactive Swagger documentation is available at `http://localhost:4000/doc` when the application is running. You can:
+- See all available endpoints
+- Try API calls directly from browser
+- View request/response formats
+- Download OpenAPI specification
 
-## Troubleshooting
+---
 
-### "Cannot connect to database"
-- Check if PostgreSQL container is running: `podman ps`
-- Verify network: `podman network inspect app-network`
-- Check logs: `podman logs library-postgres`
-
-### "Port already in use"
-- Stop local processes on ports 4000 or 5432
-- Or change ports in `.env` and container mappings
-
-### "Table does not exist"
-- Ensure `DB_SYNCHRONIZE=true` in `.env`
-- Restart application: `podman restart library-app`
-
-### "Cannot push to Docker Hub"
-- Verify login: `podman login docker.io`
-- Check repository exists on Docker Hub
-- Ensure proper tagging format: `username/repository:tag`
-
-## License
-
-This project is part of the RS School Node.js course.
-```
+**Note**: This project is part of the RS School Node.js Course.

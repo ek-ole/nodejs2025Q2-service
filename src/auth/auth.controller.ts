@@ -6,16 +6,21 @@ import {
   HttpStatus,
   UsePipes,
   ValidationPipe,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { TokensDto } from './dto/tokens.dto';
 import { LoggingService } from 'src/commom/logger/logging.service';
 import { Public } from './decorators/public.decorator';
+import { TokensDto } from './dto/tokens.dto';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -26,20 +31,20 @@ export class AuthController {
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async signup(@Body() signupDto: SignupDto): Promise<TokensDto> {
+  async signup(@Body() signupDto: SignupDto): Promise<User> {
     this.loggingService.info(
       `Signup request for login: ${signupDto.login}`,
       'AuthController',
     );
 
-    const tokens = await this.authService.signup(signupDto);
+    const result = await this.authService.signup(signupDto);
 
     this.loggingService.info(
       `Signup successful for login: ${signupDto.login}`,
       'AuthController',
     );
 
-    return tokens;
+    return result;
   }
 
   @Public()
@@ -65,9 +70,12 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ValidationPipe({ transform: true }))
   async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {
     this.loggingService.info('Refresh token request', 'AuthController');
+
+    if (!refreshTokenDto || !refreshTokenDto.refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
 
     const tokens = await this.authService.refresh(refreshTokenDto);
 
