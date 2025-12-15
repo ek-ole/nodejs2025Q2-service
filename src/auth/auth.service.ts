@@ -28,7 +28,7 @@ export class AuthService {
     private readonly loggingService: LoggingService,
   ) {}
 
-  async signup(signupDto: SignupDto): Promise<TokensDto> {
+  async signup(signupDto: SignupDto): Promise<User> {
     const { login, password } = signupDto;
 
     this.loggingService.info(
@@ -63,7 +63,7 @@ export class AuthService {
       'AuthService',
     );
 
-    return this.generateTokens(savedUser);
+    return savedUser;
   }
 
   async login(loginDto: LoginDto): Promise<TokensDto> {
