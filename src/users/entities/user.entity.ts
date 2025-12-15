@@ -1,4 +1,4 @@
-import { Exclude } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -22,8 +22,10 @@ export class User {
   version: number;
 
   @CreateDateColumn({ type: 'timestamptz' })
+  @Transform(({ value }) => value.getTime())
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
+  @Transform(({ value }) => value.getTime())
   updatedAt: Date;
 }

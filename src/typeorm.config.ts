@@ -15,7 +15,7 @@ export const typeormConfig: DataSourceOptions = {
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_DATABASE || 'library',
-  entities: [User, Artist, Album, Track, Favorite],
   synchronize: process.env.DB_SYNCHRONIZE === 'false',
   logging: process.env.TYPEORM_LOGGING === 'true',
+  entities: [User, Artist, Album, Track, Favorite],
 };
