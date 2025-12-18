@@ -6,6 +6,7 @@ import { AppDataSource } from 'src/data-source';
 import { LoggingService } from './commom/logger/logging.service';
 import { HttpExceptionFilter } from './commom/filters/http-exception.filter';
 import { GlobalErrorHandler } from './commom/logger/global-error.handler';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const tempLogger = new LoggingService();
@@ -35,6 +36,13 @@ async function bootstrap() {
   GlobalErrorHandler.initialize(loggingService);
 
   app.useGlobalFilters(new HttpExceptionFilter(loggingService));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
