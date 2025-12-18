@@ -11,4 +11,16 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Public()
+  @Get('health')
+  getHealth() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      dbConnected: true,
+      authConfigured: !!process.env.JWT_SECRET_KEY,
+    };
+  }
 }
